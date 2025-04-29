@@ -1,0 +1,20 @@
+meta {
+  name: Créer un investissement
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/investments
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer VOTRE_TOKEN_JWT
+}
+
+body:json {
+  {"projectId":1,"amount":5000}
+}

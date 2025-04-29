@@ -1,0 +1,19 @@
+meta {
+  name: Inscription - Admin
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:3000/auth/register
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {"email":"admin@example.com","password":"Admin123!","firstname":"Admin","lastname":"User","role":"admin"}
+}

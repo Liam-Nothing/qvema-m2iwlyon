@@ -1,0 +1,15 @@
+meta {
+  name: Supprimer un investissement
+  type: http
+  seq: 2
+}
+
+delete {
+  url: http://localhost:3000/investments/1
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer VOTRE_TOKEN_JWT
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Supprimer un utilisateur
+  type: http
+  seq: 3
+}
+
+delete {
+  url: http://localhost:3000/admin/users/1
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer VOTRE_TOKEN_JWT
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Obtenir les investissements d'un projet
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://localhost:3000/investments/project/1
+  body: none
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer VOTRE_TOKEN_JWT
+}

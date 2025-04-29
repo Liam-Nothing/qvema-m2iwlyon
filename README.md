@@ -21,67 +21,146 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
+# API de mise en relation Entreprises & Investisseurs
+
 ## Description
+Cette API permet la mise en relation entre entrepreneurs et investisseurs, permettant aux entrepreneurs de publier des projets et aux investisseurs de découvrir et soutenir ces projets en fonction de leurs intérêts.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Prérequis
+- Node.js (v18 ou supérieur)
+- MySQL (v8 ou supérieur)
+- npm ou yarn
 
-## Project setup
+## Installation
 
+1. Cloner le repository
 ```bash
-$ npm install
+git clone [URL_DU_REPO]
+cd [NOM_DU_REPO]
 ```
 
-## Compile and run the project
-
+2. Installer les dépendances
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+3. Configurer les variables d'environnement
+Créez un fichier `.env` à la racine du projet avec les variables suivantes :
+```env
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=3306
+DB_USERNAME=root
+DB_PASSWORD=
+DB_DATABASE=qvema
 
-```bash
-# unit tests
-$ npm run test
+# Application Configuration
+PORT=3000
+NODE_ENV=development
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# JWT Configuration
+JWT_SECRET=your-secret-key
+JWT_EXPIRATION=1d
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
+4. Créer la base de données
+```sql
+CREATE DATABASE qvema;
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Démarrage
 
-## Resources
+```bash
+# Développement
+npm run start:dev
 
-Check out a few resources that may come in handy when working with NestJS:
+# Production
+npm run build
+npm run start:prod
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Structure du Projet
+
+```
+src/
+├── modules/
+│   ├── users/
+│   │   ├── dto/
+│   │   ├── entities/
+│   │   ├── users.controller.ts
+│   │   ├── users.service.ts
+│   │   └── users.module.ts
+│   └── interests/
+│       ├── dto/
+│       ├── entities/
+│       ├── interests.controller.ts
+│       ├── interests.service.ts
+│       └── interests.module.ts
+├── app.module.ts
+└── main.ts
+```
+
+## Fonctionnalités
+
+- Authentification et gestion des utilisateurs (JWT)
+- Gestion des rôles (entrepreneur, investisseur, admin)
+- Gestion des projets
+- Gestion des investissements
+- Gestion des centres d'intérêt
+
+## API Endpoints
+
+### Authentification
+- POST /auth/register - Inscription d'un utilisateur
+- POST /auth/login - Connexion et récupération du token JWT
+
+### Utilisateurs
+- GET /users/profile - Consultation de son profil
+- PUT /users/profile - Mise à jour des informations personnelles
+- GET /users - Consultation de la liste des utilisateurs (Admin)
+- DELETE /users/:id - Suppression d'un utilisateur (Admin)
+
+### Projets
+- POST /projects - Création d'un projet
+- GET /projects - Consultation de tous les projets
+- GET /projects/:id - Consultation d'un projet par ID
+- PUT /projects/:id - Mise à jour d'un projet
+- DELETE /projects/:id - Suppression d'un projet
+
+### Intérêts
+- GET /interests - Lister tous les intérêts disponibles
+- POST /users/interests - Associer des intérêts à un utilisateur
+- GET /users/interests - Voir les intérêts d'un utilisateur
+
+### Investissements
+- POST /investments - Investir dans un projet
+- GET /investments - Voir ses investissements
+- GET /investments/project/:id - Voir les investissements d'un projet
+- DELETE /investments/:id - Annuler un investissement
+
+## Sécurité
+
+- Authentification JWT
+- Validation des données
+- Protection des routes avec Guards
+- Gestion des rôles
+
+## Tests
+
+```bash
+# Tests unitaires
+npm run test
+
+# Tests e2e
+npm run test:e2e
+
+# Couverture de tests
+npm run test:cov
+```
+
+## Licence
+
+Ce projet est sous licence MIT.
 
 ## Support
 
