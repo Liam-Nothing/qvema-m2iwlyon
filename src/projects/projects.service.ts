@@ -1,10 +1,9 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Project } from './entities/project.entity';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
-import { User } from '../users/entities/user.entity';
+import { Project } from '../modules/projects/entities/project.entity';
+import { User } from '../modules/users/entities/user.entity';
+import { CreateProjectDto, UpdateProjectDto } from './dto/project.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -15,12 +14,15 @@ export class ProjectsService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async create(createProjectDto: CreateProjectDto, ownerId: string): Promise<Project> {
-    const owner = await this.usersRepository.findOneOrFail({ where: { id: ownerId } });
+  async create(createProjectDto: CreateProjectDto, userId: string): Promise<Project> {
+    const owner = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!owner) {
+      throw new NotFoundException('User not found');
+    }
+
     const project = this.projectsRepository.create({
       ...createProjectDto,
       owner,
-      ownerId,
     });
 
     return this.projectsRepository.save(project);
@@ -28,14 +30,14 @@ export class ProjectsService {
 
   async findAll(): Promise<Project[]> {
     return this.projectsRepository.find({
-      relations: ['owner', 'investments'],
+      relations: ['owner', 'investments', 'investments.investor'],
     });
   }
 
   async findOne(id: string): Promise<Project> {
     const project = await this.projectsRepository.findOne({
       where: { id },
-      relations: ['owner', 'investments'],
+      relations: ['owner', 'investments', 'investments.investor'],
     });
 
     if (!project) {
@@ -48,10 +50,12 @@ export class ProjectsService {
   async update(id: string, updateProjectDto: UpdateProjectDto, userId: string): Promise<Project> {
     const project = await this.findOne(id);
 
-    if (project.ownerId !== userId) {
-      throw new ForbiddenException('You can only update your own projects');
+    // Vérifiez que l'utilisateur est le propriétaire du projet
+    if (project.owner.id !== userId) {
+      throw new ForbiddenException('You do not have permission to update this project');
     }
 
+    // Mise à jour du projet
     Object.assign(project, updateProjectDto);
     return this.projectsRepository.save(project);
   }
@@ -59,8 +63,9 @@ export class ProjectsService {
   async remove(id: string, userId: string): Promise<void> {
     const project = await this.findOne(id);
 
-    if (project.ownerId !== userId) {
-      throw new ForbiddenException('You can only delete your own projects');
+    // Vérifiez que l'utilisateur est le propriétaire du projet
+    if (project.owner.id !== userId) {
+      throw new ForbiddenException('You do not have permission to delete this project');
     }
 
     await this.projectsRepository.remove(project);
@@ -69,7 +74,7 @@ export class ProjectsService {
   async findByUser(userId: string): Promise<Project[]> {
     return this.projectsRepository.find({
       where: { owner: { id: userId } },
-      relations: ['investments'],
+      relations: ['investments', 'investments.investor'],
     });
   }
 } 

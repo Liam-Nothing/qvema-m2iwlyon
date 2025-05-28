@@ -92,12 +92,13 @@ export class UsersService {
       user.interests = [];
     }
 
-    if (!user.interests.some(i => i.id === interest.id)) {
-      user.interests.push(interest);
-      await this.usersRepository.save(user);
+    const interestExists = user.interests.some(i => i.id === interest.id);
+    if (interestExists) {
+      return user;
     }
 
-    return user;
+    user.interests.push(interest);
+    return this.usersRepository.save(user);
   }
 
   async removeInterest(userId: string, interestId: string): Promise<User> {
